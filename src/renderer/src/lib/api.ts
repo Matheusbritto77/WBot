@@ -24,10 +24,15 @@ const webFetch = async (path: string, options: any = {}) => {
     if (response.status === 401) {
         // Se receber 401 (Não autorizado), limpa o token e força redirecionamento
         localStorage.removeItem('auth_token');
-        if (!window.location.pathname.includes('/login')) {
+        const isLoginPage = window.location.pathname.includes('/login');
+
+        if (!isLoginPage) {
             window.location.href = '/login';
+            throw new Error('Sessão expirada');
         }
-        throw new Error('Sessão expirada');
+
+        // Se já está no login, apenas retorna o erro silenciosamente para o formulário tratar
+        throw new Error('Usuário ou senha inválidos');
     }
 
     if (!response.ok) {

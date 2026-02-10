@@ -22,10 +22,10 @@ function App(props: any) {
 
         // Global error handler
         window.onunhandledrejection = (event) => {
-            console.error('Erro Assíncrono:', event.reason);
             if (event.reason?.message === 'Sessão expirada') {
-                navigate('/login');
+                return; // Ignore silence
             }
+            console.error('Erro Assíncrono:', event.reason);
         };
 
         // Redirecionamento de segurança

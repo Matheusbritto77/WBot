@@ -13,6 +13,13 @@ async function startServer() {
         console.log('[Server] Initializing Database...');
         databaseService.init();
 
+        // Create default user if none exists
+        const userCount = (databaseService.get('SELECT COUNT(*) as count FROM users') as any).count;
+        if (userCount === 0) {
+            console.log('[Server] Creating default admin user...');
+            databaseService.run('INSERT INTO users (username, password) VALUES (?, ?)', ['admin', 'admin123']);
+        }
+
         console.log('[Server] Initializing Bot Controller...');
         botController.init();
 
