@@ -1,5 +1,5 @@
 [phases.setup]
-nixPkgs = ["nodejs_22", "bun"]
+nixPkgs = ["nodejs", "bun", "python3", "gcc"]
 
 [phases.build]
 cmds = [
@@ -8,4 +8,4 @@ cmds = [
 ]
 
 [start]
-cmd = "HEADLESS=true node out/main/server.js"
+cmd = "bun run start:vps"

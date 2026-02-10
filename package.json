@@ -21,7 +21,7 @@
     "build:win": "npm run build && electron-builder --win",
     "build:mac": "npm run build && electron-builder --mac",
     "build:linux": "npm run build && electron-builder --linux",
-    "start:vps": "HEADLESS=true node out/main/server.js"
+    "start:vps": "HEADLESS=true bun out/main/server.js"
   },
   "dependencies": {
     "@fastify/cors": "^11.2.0",
