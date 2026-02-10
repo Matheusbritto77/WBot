@@ -1,7 +1,6 @@
 import { databaseService } from './services/DatabaseService';
 import { botController } from './controllers/BotController';
 import { webService } from './services/WebService';
-import { setupIpc } from './ipc';
 
 async function startServer() {
     console.log('--- STARTING IN SERVER MODE (HEADLESS) ---');
@@ -11,9 +10,13 @@ async function startServer() {
 
     // Initialize core services
     try {
+        console.log('[Server] Initializing Database...');
         databaseService.init();
-        setupIpc(); // Still setup IPC in case some internal logic depends on it (though window events won't fire)
+
+        console.log('[Server] Initializing Bot Controller...');
         botController.init();
+
+        console.log('[Server] Initializing Web Service...');
         await webService.init();
 
         console.log('--- SERVER MODE ACTIVE AND READY ---');

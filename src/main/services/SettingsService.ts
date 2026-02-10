@@ -1,5 +1,6 @@
 import { databaseService } from './DatabaseService';
 import { IS_HEADLESS } from '../utils/paths';
+import { createRequire } from 'module';
 
 export class SettingsService {
     public get(key: string): string | null {
@@ -15,7 +16,7 @@ export class SettingsService {
         if (IS_HEADLESS) return;
 
         try {
-            // Use dynamic require to avoid bundling issues in headless environments
+            const require = createRequire(import.meta.url);
             const { BrowserWindow } = require('electron');
             const wins = BrowserWindow.getAllWindows();
             wins.forEach((w: any) => {

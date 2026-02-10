@@ -6,10 +6,12 @@ import { loopService } from './services/LoopService';
 import { authSecurityService } from './services/AuthSecurityService';
 import { settingsService } from './services/SettingsService';
 import { automationService } from './services/AutomationService';
+import { createRequire } from 'module';
 
 export function setupIpc() {
     if (IS_HEADLESS) return;
 
+    const require = createRequire(import.meta.url);
     const { ipcMain, BrowserWindow } = require('electron');
     // Auth
     ipcMain.handle('auth:login', async (_, { username, password }) => {

@@ -1,5 +1,7 @@
 import { join } from 'path';
 import { existsSync, mkdirSync } from 'fs';
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
 
 // Check if we are running in Electron
 const isElectron = !!process.versions.electron;
