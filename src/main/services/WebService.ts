@@ -121,19 +121,32 @@ export class WebService {
             });
 
             // WhatsApp
-            instance.get('/api/whatsapp/status', () => whatsappService.getStatus());
-            instance.get('/api/whatsapp/qr', () => whatsappService.getQR());
-            instance.post('/api/whatsapp/connect', async () => {
-                await whatsappService.connect();
-                return { success: true };
+            instance.get('/api/whatsapp/status', async () => {
+                return { status: whatsappService.getStatus() };
             });
-            instance.post('/api/whatsapp/logout', async () => {
-                await whatsappService.logout();
-                return { success: true };
+            instance.get('/api/whatsapp/qr', async () => {
+                return { qr: whatsappService.getQR() };
+            });
+            instance.post('/api/whatsapp/connect', async (_request, reply) => {
+                try {
+                    await whatsappService.connect();
+                    return { success: true };
+                } catch (e: any) {
+                    return reply.code(400).send({ error: e.message });
+                }
+            });
+            instance.post('/api/whatsapp/logout', async (_request, reply) => {
+                try {
+                    await whatsappService.logout();
+                    return { success: true };
+                } catch (e: any) {
+                    return reply.code(400).send({ error: e.message });
+                }
             });
             instance.get('/api/whatsapp/groups', async (request) => {
                 const { force } = request.query as any;
-                return await whatsappService.getGroups(force === 'true');
+                const groups = await whatsappService.getGroups(force === 'true');
+                return { groups };
             });
 
             // Stats

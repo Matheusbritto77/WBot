@@ -362,9 +362,8 @@ function Settings() {
                         </div>
                     </Show>
 
-                    {/* ========== AI TAB ========== */}
                     <Show when={activeTab() === 'ai'}>
-                        <div class="glass p-8 rounded-3xl space-y-10 animate-in fade-in duration-300">
+                        <form onSubmit={(e) => { e.preventDefault(); saveSettings(); }} class="glass p-8 rounded-3xl space-y-10 animate-in fade-in duration-300">
                             <div>
                                 <h2 class="text-xl font-bold">Configuração da IA</h2>
                                 <p class="text-sm text-zinc-500 mt-1">Configure o cérebro do seu assistente (Google Gemini)</p>
@@ -381,6 +380,7 @@ function Settings() {
                                     </div>
                                 </div>
                                 <button
+                                    type="button"
                                     onClick={() => setAutoReply(!autoReply())}
                                     class={`w-14 h-8 rounded-full transition-all relative ${autoReply() ? 'bg-brand' : 'bg-zinc-800'}`}
                                 >
@@ -395,6 +395,7 @@ function Settings() {
                                     </label>
                                     <input
                                         type="password"
+                                        autocomplete="password"
                                         value={apiKey()}
                                         onInput={e => setApiKey(e.currentTarget.value)}
                                         placeholder="Cole sua API key aqui..."
@@ -438,7 +439,7 @@ function Settings() {
                                     <p class="text-[10px] text-zinc-600 ml-1">Se o contato disser esta palavra, ele será bloqueado automaticamente.</p>
                                 </div>
                             </div>
-                        </div>
+                        </form>
                     </Show>
 
                     {/* ========== RULES TAB ========== */}

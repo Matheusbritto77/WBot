@@ -36,8 +36,17 @@ const webFetch = async (path: string, options: any = {}) => {
     }
 
     if (!response.ok) {
-        const err = await response.json();
-        throw new Error(err.error || 'Erro na requisição');
+        let errorMsg = 'Erro na requisição';
+        try {
+            const err = await response.json();
+            errorMsg = err.error || errorMsg;
+        } catch (e) {
+            try {
+                const text = await response.text();
+                errorMsg = text || errorMsg;
+            } catch (inner) { }
+        }
+        throw new Error(errorMsg);
     }
     return response.json();
 };
@@ -131,11 +140,13 @@ export const api: APIBridge = {
     whatsapp: {
         getStatus: async () => {
             if (isElectron) return (window as any).botApp.whatsapp.getStatus();
-            return webFetch('/whatsapp/status');
+            const res = await webFetch('/whatsapp/status');
+            return res.status;
         },
         getQR: async () => {
             if (isElectron) return (window as any).botApp.whatsapp.getQR();
-            return webFetch('/whatsapp/qr');
+            const res = await webFetch('/whatsapp/qr');
+            return res.qr;
         },
         connect: async () => {
             if (isElectron) return (window as any).botApp.whatsapp.connect();
@@ -149,8 +160,8 @@ export const api: APIBridge = {
             if (isElectron) return (window as any).botApp.whatsapp.onStatusChanged(cb);
             const interval = setInterval(async () => {
                 try {
-                    const status = await webFetch('/whatsapp/status');
-                    cb(status);
+                    const res = await webFetch('/whatsapp/status');
+                    cb(res.status);
                 } catch (e) { }
             }, 3000);
             return () => clearInterval(interval);
@@ -159,8 +170,8 @@ export const api: APIBridge = {
             if (isElectron) return (window as any).botApp.whatsapp.onQRReceived(cb);
             const interval = setInterval(async () => {
                 try {
-                    const q = await webFetch('/whatsapp/qr');
-                    if (q) cb(q);
+                    const res = await webFetch('/whatsapp/qr');
+                    if (res.qr) cb(res.qr);
                 } catch (e) { }
             }, 5000);
             return () => clearInterval(interval);
@@ -171,7 +182,8 @@ export const api: APIBridge = {
         },
         getGroups: async (force = false) => {
             if (isElectron) return (window as any).botApp.whatsapp.getGroups(force);
-            return webFetch(`/whatsapp/groups?force=${force}`);
+            const res = await webFetch(`/whatsapp/groups?force=${force}`);
+            return res.groups;
         }
     },
     mcp: {
