@@ -53,6 +53,7 @@ function Login() {
                         <label class="text-xs font-semibold text-zinc-500 uppercase tracking-wider ml-1">Usuário</label>
                         <input
                             type="text"
+                            autocomplete="username"
                             class="w-full bg-zinc-900/50 border border-zinc-800 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-brand/50 focus:border-brand transition-all"
                             onInput={e => setUsername(e.currentTarget.value)}
                             required
@@ -62,6 +63,7 @@ function Login() {
                         <label class="text-xs font-semibold text-zinc-500 uppercase tracking-wider ml-1">Senha</label>
                         <input
                             type="password"
+                            autocomplete="current-password"
                             class="w-full bg-zinc-900/50 border border-zinc-800 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-brand/50 focus:border-brand transition-all"
                             onInput={e => setPassword(e.currentTarget.value)}
                             required

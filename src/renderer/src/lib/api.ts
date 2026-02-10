@@ -1,6 +1,10 @@
 export const isElectron = !!(window as any).botApp;
 
-const API_BASE = 'http://localhost:3000/api';
+// Em modo Web/VPS, o API_BASE deve apontar para o próprio servidor que serve a página,
+// a menos que estejamos no Electron (onde o barramento é diferente).
+const API_BASE = isElectron
+    ? 'http://localhost:3000/api' // Electron IPC bridge fallback
+    : `${window.location.origin}/api`;
 
 const getAuthHeaders = () => {
     const token = localStorage.getItem('auth_token');
