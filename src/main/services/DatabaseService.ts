@@ -1,14 +1,32 @@
-import Database from 'better-sqlite3';
+declare const Bun: any;
 import { join } from 'path';
-import { getDataPath } from '../utils/paths';
+import { getDataPath, IS_HEADLESS } from '../utils/paths';
+import { createRequire } from 'module';
 
 export class DatabaseService {
-  private db: Database.Database | null = null;
+  private db: any = null;
 
   public init() {
     if (this.db) return;
     const dbPath = join(getDataPath(), 'database.sqlite');
-    this.db = new Database(dbPath);
+
+    try {
+      const require = createRequire(import.meta.url);
+      if (IS_HEADLESS && typeof Bun !== 'undefined') {
+        // Em modo servidor (VPS), usamos o bun:sqlite que já vem embutido e não dá erro de libstdc++
+        console.log('[Database] Usando motor nativo bun:sqlite (VPS)');
+        const { Database } = require('bun:sqlite');
+        this.db = new Database(dbPath);
+      } else {
+        // No desktop (Windows), continuamos com o better-sqlite3
+        console.log('[Database] Usando motor better-sqlite3 (Desktop)');
+        const BetterDatabase = require('better-sqlite3');
+        this.db = new BetterDatabase(dbPath);
+      }
+    } catch (err: any) {
+      console.error('[Database] Erro fatal ao carregar o driver do banco:', err.message);
+      throw err;
+    }
 
     // Base schema
     this.db.exec(`
@@ -99,7 +117,7 @@ export class DatabaseService {
     this.db.prepare("INSERT OR IGNORE INTO bot_stats (key, value) VALUES ('monthly_messages', 0)").run();
   }
 
-  private getDb(): Database.Database {
+  private getDb(): any {
     if (!this.db) {
       this.init();
     }

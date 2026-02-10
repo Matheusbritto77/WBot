@@ -1,14 +1,11 @@
 [phases.setup]
-nixPkgs = ["nodejs", "bun", "python3", "gcc", "gnumake", "stdenv.cc.cc.lib"]
+nixPkgs = ["nodejs", "bun"]
 
 [phases.build]
 cmds = [
     "SKIP_ELECTRON_BUILD=1 bun install",
     "bun run build"
 ]
-
-[variables]
-LD_LIBRARY_PATH = "$LD_LIBRARY_PATH:/nix/store"
 
 [start]
 cmd = "bun run start:vps"
