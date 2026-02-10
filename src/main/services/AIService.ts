@@ -34,7 +34,7 @@ export class AIService {
         return new GoogleGenerativeAI(apiKey);
     }
 
-    async generateResponse(messageContent: string, systemPrompt: string, imageData?: { data: string, mimeType: string }) {
+    async generateResponse(messageContent: string, systemPrompt: string, imageData?: { data: string, mimeType: string }, history: { role: string, content: string }[] = []) {
         const genAI = this.getInstance();
         if (!genAI) return 'Erro: API Key do Gemini não configurada.';
 
@@ -48,7 +48,15 @@ export class AIService {
             systemInstruction: fullSystemPrompt
         });
 
-        const chat = model.startChat();
+        // Convert simple history to Gemini history format
+        const geminiHistory = history.map(h => ({
+            role: h.role,
+            parts: [{ text: h.content }]
+        }));
+
+        const chat = model.startChat({
+            history: geminiHistory
+        });
 
         try {
             const parts: any[] = [];

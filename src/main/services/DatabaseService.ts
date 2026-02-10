@@ -153,6 +153,14 @@ export class DatabaseService {
     const row = this.getDb().prepare('SELECT value FROM bot_stats WHERE key = ?').get(key) as { value: number } | undefined;
     return row ? row.value : 0;
   }
+
+  public saveMessage(jid: string, role: string, content: string) {
+    this.getDb().prepare('INSERT INTO messages (jid, role, content) VALUES (?, ?, ?)').run(jid, role, content);
+  }
+
+  public getMessageHistory(jid: string, limit: number = 10) {
+    return this.getDb().prepare('SELECT role, content FROM (SELECT * FROM messages WHERE jid = ? ORDER BY timestamp DESC LIMIT ?) ORDER BY timestamp ASC').all(jid, limit) as { role: string, content: string }[];
+  }
 }
 
 export const databaseService = new DatabaseService();
