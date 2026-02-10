@@ -10,6 +10,7 @@ import { whatsappService } from './WhatsAppService';
 import { authSecurityService } from './AuthSecurityService';
 import { cronService } from './CronService';
 import { loopService } from './LoopService';
+import { automationService } from './AutomationService';
 import { z } from 'zod';
 import { IS_HEADLESS } from '../utils/paths';
 
@@ -226,6 +227,29 @@ export class WebService {
             });
             instance.post('/api/loop/:id/stop', (request) => {
                 loopService.stop((request.params as any).id);
+                return { success: true };
+            });
+
+            // Automation Flows
+            instance.get('/api/automation', () => {
+                return automationService.getAll();
+            });
+            instance.get('/api/automation/:id', (request) => {
+                const { id } = request.params as any;
+                return automationService.getById(id);
+            });
+            instance.post('/api/automation', (request) => {
+                return automationService.save(request.body as any);
+            });
+            instance.delete('/api/automation/:id', (request) => {
+                const { id } = request.params as any;
+                automationService.remove(id);
+                return { success: true };
+            });
+            instance.patch('/api/automation/:id/toggle', (request) => {
+                const { id } = request.params as any;
+                const { enabled } = request.body as any;
+                automationService.toggle(id, enabled);
                 return { success: true };
             });
         });
