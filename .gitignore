@@ -1,0 +1,53 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Node modules
+node_modules/
+
+# Build artifacts
+dist/
+dist-ssr/
+out/
+release/
+*.asar
+
+# Environment files
+.env
+*.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# OS related
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor related
+.vscode/*
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/tasks.json
+.idea/
+*.swp
+*.swo
+
+# Project specific
+database.sqlite
+database.sqlite-journal
+auth_info_baileys/
+sessions/
+tmp/
+*.bak
+
+# Cache
+.eslintcache
+.stylelintcache
+.vite-inspect
+.parcel-cache
