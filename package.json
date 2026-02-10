@@ -16,7 +16,7 @@
     "dev:win": "electron-vite dev",
     "dev:all": "electron-vite dev",
     "build": "npm run typecheck && electron-vite build",
-    "postinstall": "electron-builder install-app-deps",
+    "postinstall": "node -e \"if(process.env.SKIP_ELECTRON_BUILD !== '1') { try { require('child_process').execSync('electron-builder install-app-deps', {stdio: 'inherit'}); } catch(e) {} }\"",
     "build:unpack": "npm run build && electron-builder --dir",
     "build:win": "npm run build && electron-builder --win",
     "build:mac": "npm run build && electron-builder --mac",

@@ -1,8 +1,11 @@
 [phases.setup]
-nixPkgs = ["nodejs", "bun"]
+nixPkgs = ["nodejs_22", "bun"]
 
 [phases.build]
-cmds = ["bun install", "bun run build"]
+cmds = [
+    "SKIP_ELECTRON_BUILD=1 bun install",
+    "bun run build"
+]
 
 [start]
 cmd = "HEADLESS=true node out/main/server.js"
