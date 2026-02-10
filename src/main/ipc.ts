@@ -175,30 +175,28 @@ export function setupIpc() {
     // Events Bridge
     whatsappService.on('status', (status) => {
         const wins = BrowserWindow.getAllWindows();
-        wins.forEach((w: BrowserWindow) => w.webContents.send('whatsapp:status-changed', status));
+        wins.forEach((w: any) => w.webContents.send('whatsapp:status-changed', status));
     });
 
     whatsappService.on('qr', (qr) => {
         const wins = BrowserWindow.getAllWindows();
-        wins.forEach((w: BrowserWindow) => w.webContents.send('whatsapp:qr-received', qr));
+        wins.forEach((w: any) => w.webContents.send('whatsapp:qr-received', qr));
     });
 
     whatsappService.on('activity', (data) => {
         const wins = BrowserWindow.getAllWindows();
-        wins.forEach((w: BrowserWindow) => w.webContents.send('whatsapp:activity', data));
+        wins.forEach((w: any) => w.webContents.send('whatsapp:activity', data));
     });
 
     loopService.on('status', (data) => {
         const wins = BrowserWindow.getAllWindows();
-        wins.forEach((w: BrowserWindow) => w.webContents.send('loop:status-changed', data));
+        wins.forEach((w: any) => w.webContents.send('loop:status-changed', data));
     });
 
     loopService.on('progress', (data) => {
         const wins = BrowserWindow.getAllWindows();
-        wins.forEach((w: BrowserWindow) => w.webContents.send('loop:progress', data));
+        wins.forEach((w: any) => w.webContents.send('loop:progress', data));
     });
-
-    // ========== AUTOMATION FLOWS ==========
     ipcMain.handle('automation:getAll', () => automationService.getAll());
     ipcMain.handle('automation:get', (_, id) => automationService.getById(id));
     ipcMain.handle('automation:save', (_, flow) => automationService.save(flow));

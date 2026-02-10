@@ -1,29 +1,26 @@
-import { join } from 'path';
-import { existsSync } from 'fs';
 import { databaseService } from './services/DatabaseService';
 import { botController } from './controllers/BotController';
 import { webService } from './services/WebService';
+import { setupIpc } from './ipc';
 
 async function startServer() {
     console.log('--- STARTING IN SERVER MODE (HEADLESS) ---');
 
-    // Initialize services
-    databaseService.init();
-    botController.init();
+    // Ensure we are in headless mode
+    process.env.HEADLESS = 'true';
 
-    // Serve static files if in production
-    // In VPS, we usually run after 'npm run build'
-    // The build output for renderer is in 'out/renderer' or similar
-    const rendererPath = join(process.cwd(), 'out', 'renderer');
+    // Initialize core services
+    try {
+        databaseService.init();
+        setupIpc(); // Still setup IPC in case some internal logic depends on it (though window events won't fire)
+        botController.init();
+        await webService.init();
 
-    if (existsSync(rendererPath)) {
-        console.log(`[Server] Serving renderer from: ${rendererPath}`);
-        // We'll need to update WebService to support static file serving
+        console.log('--- SERVER MODE ACTIVE AND READY ---');
+    } catch (err) {
+        console.error('Failed to initialize server services:', err);
+        process.exit(1);
     }
-
-    await webService.init();
-
-    console.log('--- SERVER MODE ACTIVE ---');
 }
 
 startServer().catch(err => {

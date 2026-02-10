@@ -7,6 +7,7 @@ import { setupIpc } from './ipc'
 import { botController } from './controllers/BotController'
 import { databaseService } from './services/DatabaseService'
 import { webService } from './services/WebService'
+import { IS_HEADLESS } from './utils/paths'
 
 function createWindow(): void {
     console.log('--- createWindow called ---');
@@ -62,15 +63,19 @@ app.whenReady().then(() => {
     botController.init()
     webService.init()
 
-    createWindow()
+    if (!IS_HEADLESS) {
+        createWindow()
+    } else {
+        console.log('--- HEADLESS MODE DETECTED: Skipping window creation ---');
+    }
 
     app.on('activate', function () {
-        if (BrowserWindow.getAllWindows().length === 0) createWindow()
+        if (!IS_HEADLESS && BrowserWindow.getAllWindows().length === 0) createWindow()
     })
 })
 
 app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') {
+    if (process.platform !== 'darwin' && !IS_HEADLESS) {
         app.quit()
     }
 })
