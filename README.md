@@ -76,4 +76,28 @@ npm run build:win
 ![Palette](./public/screenshots/palette.png)
 
 ---
+## 🚀 Hospedagem em VPS (Headless)
+
+Este projeto está pronto para ser hospedado em servidores Linux (VPS) usando Dokploy, Coolify ou diretamente com Docker/Nixpacks.
+
+### Configuração
+1.  Clone o repositório na sua VPS.
+2.  Crie um arquivo `.env` baseado no `.env.example`.
+3.  Configure o `JWT_SECRET` e a `GEMINI_API_KEY`.
+
+### Comandos para Servidor
+```bash
+# Instalar dependências
+bun install
+
+# Compilar o projeto (Main + Renderer + Server)
+bun run build
+
+# Iniciar em modo servidor (sem interface gráfica)
+bun run start:vps
+```
+
+O bot iniciará o servidor Fastify na porta configurada (padrão 3000) e servirá a interface web automaticamente. Você pode acessar pelo navegador usando o IP do servidor.
+
+---
 Desenvolvido com ❤️ por [Matheusbritto77](https://github.com/Matheusbritto77)

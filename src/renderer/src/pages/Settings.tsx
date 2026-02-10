@@ -110,7 +110,7 @@ function Settings() {
         setLoopTasks(tasks);
     };
 
-    const genId = () => crypto.randomUUID().slice(0, 8);
+    const genId = () => Math.random().toString(36).substring(2, 10);
 
     onMount(async () => {
 

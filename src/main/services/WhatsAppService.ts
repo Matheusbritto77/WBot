@@ -1,9 +1,9 @@
 import * as BaileysModule from '@whiskeysockets/baileys';
 import { Boom } from '@hapi/boom';
 import path from 'path';
-import { app } from 'electron';
 import pino from 'pino';
 import { EventEmitter } from 'events';
+import { getDataPath } from '../utils/paths';
 
 function getSocketFactory(b: any) {
     if (typeof b.default === 'function') return b.default;
@@ -49,7 +49,7 @@ export class WhatsAppService extends EventEmitter {
 
         try {
             console.log('[WhatsAppService] Iniciando tentativa de conexão...');
-            const authPath = path.join(app.getPath('userData'), 'baileys_auth');
+            const authPath = path.join(getDataPath(), 'baileys_auth');
 
             const b = BaileysModule as any;
             const useMultiFileAuthState = b.useMultiFileAuthState || (b.default && b.default.useMultiFileAuthState) || (b.default && b.default.default && b.default.default.useMultiFileAuthState);

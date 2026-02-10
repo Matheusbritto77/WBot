@@ -18,12 +18,14 @@
     "build:unpack": "npm run build && electron-builder --dir",
     "build:win": "npm run build && electron-builder --win",
     "build:mac": "npm run build && electron-builder --mac",
-    "build:linux": "npm run build && electron-builder --linux"
+    "build:linux": "npm run build && electron-builder --linux",
+    "start:vps": "HEADLESS=true node out/main/server.js"
   },
   "dependencies": {
     "@fastify/cors": "^11.2.0",
     "@fastify/jwt": "^10.0.0",
     "@fastify/rate-limit": "^10.3.0",
+    "@fastify/static": "^9.0.0",
     "@google/generative-ai": "^0.21.0",
     "@kobalte/core": "^0.13.9",
     "@solidjs/router": "^0.15.3",

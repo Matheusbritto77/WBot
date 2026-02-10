@@ -2,21 +2,44 @@ import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import rateLimit from '@fastify/rate-limit';
 import jwt from '@fastify/jwt';
+import fastifyStatic from '@fastify/static';
+import { join } from 'path';
+import { existsSync } from 'fs';
 import { databaseService } from './DatabaseService';
 import { whatsappService } from './WhatsAppService';
 import { authSecurityService } from './AuthSecurityService';
 import { cronService } from './CronService';
 import { loopService } from './LoopService';
 import { z } from 'zod';
+import { IS_HEADLESS } from '../utils/paths';
 
 export class WebService {
     private fastify = Fastify({ logger: true });
-    private readonly PORT = 3000;
+    private readonly PORT = Number(process.env.PORT) || 3000;
 
     public async init() {
+        // Serve static files if in headless mode (VPS)
+        if (IS_HEADLESS) {
+            const rendererPath = join(process.cwd(), 'out', 'renderer');
+            if (existsSync(rendererPath)) {
+                await this.fastify.register(fastifyStatic, {
+                    root: rendererPath,
+                    prefix: '/',
+                });
+
+                // SPA fallback: serve index.html for unknown routes
+                this.fastify.setNotFoundHandler((request, reply) => {
+                    if (request.url.startsWith('/api')) {
+                        return reply.code(404).send({ error: 'Endpoint não encontrado' });
+                    }
+                    return reply.sendFile('index.html');
+                });
+            }
+        }
+
         // Security Plugins
         await this.fastify.register(cors, {
-            origin: true // In production, refine this
+            origin: true
         });
 
         await this.fastify.register(rateLimit, {
@@ -25,7 +48,7 @@ export class WebService {
         });
 
         await this.fastify.register(jwt, {
-            secret: 'seu-segredo-super-seguro-aqui' // In production, use env variable
+            secret: process.env.JWT_SECRET || 'seu-segredo-super-seguro-aqui'
         });
 
         // Auth Routes

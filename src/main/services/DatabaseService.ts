@@ -1,14 +1,16 @@
 import Database from 'better-sqlite3';
 import { join } from 'path';
-import { app } from 'electron';
+import { getDataPath } from '../utils/paths';
 
 export class DatabaseService {
   private db: Database.Database | null = null;
 
   public init() {
     if (this.db) return;
-    const dbPath = join(app.getPath('userData'), 'database.sqlite');
+    const dbPath = join(getDataPath(), 'database.sqlite');
     this.db = new Database(dbPath);
+
+    // Base schema
     this.db.exec(`
       CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -75,11 +77,26 @@ export class DatabaseService {
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
       );
-
-      -- Initialize message counts if not exists
-      INSERT OR IGNORE INTO bot_stats (key, value) VALUES ('total_messages', 0);
-      INSERT OR IGNORE INTO bot_stats (key, value) VALUES ('monthly_messages', 0);
     `);
+
+    // Migration: Add columns to existing automation_flows if missing
+    try {
+      const columns = this.db.prepare("PRAGMA table_info(automation_flows)").all() as any[];
+      const columnNames = columns.map(c => c.name);
+
+      if (!columnNames.includes('trigger_type')) {
+        this.db.exec("ALTER TABLE automation_flows ADD COLUMN trigger_type TEXT NOT NULL DEFAULT 'keyword'");
+      }
+      if (!columnNames.includes('trigger_value')) {
+        this.db.exec("ALTER TABLE automation_flows ADD COLUMN trigger_value TEXT DEFAULT ''");
+      }
+    } catch (e) {
+      console.error("[Database] Migration error:", e);
+    }
+
+    // Initialize message counts if not exists
+    this.db.prepare("INSERT OR IGNORE INTO bot_stats (key, value) VALUES ('total_messages', 0)").run();
+    this.db.prepare("INSERT OR IGNORE INTO bot_stats (key, value) VALUES ('monthly_messages', 0)").run();
   }
 
   private getDb(): Database.Database {

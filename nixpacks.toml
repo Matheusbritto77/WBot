@@ -1,0 +1,8 @@
+[phases.setup]
+nixPkgs = ["nodejs", "bun"]
+
+[phases.build]
+cmds = ["bun install", "bun run build"]
+
+[start]
+cmd = "HEADLESS=true node out/main/server.js"

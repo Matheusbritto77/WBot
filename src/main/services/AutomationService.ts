@@ -280,12 +280,22 @@ export class AutomationService extends EventEmitter {
     }
 
     private parseRow(row: any): AutomationFlow {
-        return {
-            ...row,
-            nodes: JSON.parse(row.nodes || '[]'),
-            edges: JSON.parse(row.edges || '[]'),
-            enabled: !!row.enabled
-        };
+        try {
+            return {
+                ...row,
+                nodes: JSON.parse(row.nodes || '[]'),
+                edges: JSON.parse(row.edges || '[]'),
+                enabled: !!row.enabled
+            };
+        } catch (e) {
+            console.error("[AutomationService] Error parsing flow row:", row.id, e);
+            return {
+                ...row,
+                nodes: [],
+                edges: [],
+                enabled: false
+            } as any;
+        }
     }
 }
 
