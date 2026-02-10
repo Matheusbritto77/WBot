@@ -1,4 +1,4 @@
-import { ipcMain, BrowserWindow } from 'electron';
+import { IS_HEADLESS } from './utils/paths';
 import { databaseService } from './services/DatabaseService';
 import { whatsappService } from './services/WhatsAppService';
 import { cronService } from './services/CronService';
@@ -8,6 +8,9 @@ import { settingsService } from './services/SettingsService';
 import { automationService } from './services/AutomationService';
 
 export function setupIpc() {
+    if (IS_HEADLESS) return;
+
+    const { ipcMain, BrowserWindow } = require('electron');
     // Auth
     ipcMain.handle('auth:login', async (_, { username, password }) => {
         // Validate character counts (Security)

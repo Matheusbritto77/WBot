@@ -1,5 +1,5 @@
-import { BrowserWindow } from 'electron';
 import { databaseService } from './DatabaseService';
+import { IS_HEADLESS } from '../utils/paths';
 
 export class SettingsService {
     public get(key: string): string | null {
@@ -12,12 +12,20 @@ export class SettingsService {
     }
 
     private notify(key: string, value: any) {
-        const wins = BrowserWindow.getAllWindows();
-        wins.forEach((w: BrowserWindow) => {
-            if (!w.isDestroyed()) {
-                w.webContents.send('settings:changed', { key, value });
-            }
-        });
+        if (IS_HEADLESS) return;
+
+        try {
+            // Use dynamic require to avoid bundling issues in headless environments
+            const { BrowserWindow } = require('electron');
+            const wins = BrowserWindow.getAllWindows();
+            wins.forEach((w: any) => {
+                if (!w.isDestroyed()) {
+                    w.webContents.send('settings:changed', { key, value });
+                }
+            });
+        } catch (e) {
+            // Silently fail if electron is not available
+        }
     }
 
     private normalizeJid(id: string): string {
