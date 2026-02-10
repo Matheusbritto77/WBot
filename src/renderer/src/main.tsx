@@ -1,5 +1,5 @@
 import { render } from 'solid-js/web';
-import { MemoryRouter, Route } from '@solidjs/router';
+import { Router, Route } from '@solidjs/router';
 import App from './App';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -13,7 +13,7 @@ const root = document.getElementById('root');
 
 if (root) {
     render(() => (
-        <MemoryRouter root={App}>
+        <Router root={App}>
             <Route path="/login" component={Login} />
             <Route path="/register" component={Register} />
             <Route path="/" component={Dashboard}>
@@ -21,6 +21,6 @@ if (root) {
                 <Route path="/settings" component={Settings} />
                 <Route path="/automations" component={FlowBuilder} />
             </Route>
-        </MemoryRouter>
+        </Router>
     ), root);
 }

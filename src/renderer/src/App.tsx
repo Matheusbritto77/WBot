@@ -8,17 +8,27 @@ function App(props: any) {
     const location = useLocation();
 
     createEffect(() => {
-        // Global error handler for production debugging
-        window.onerror = (msg, url, line, col, error) => {
-            alert(`ERRO CRÍTICO: ${msg}\nLocal: ${url}:${line}:${col}\nStack: ${error?.stack}`);
-            return false;
-        };
+        // Tentar restaurar sessão do localStorage ao iniciar
+        const savedToken = localStorage.getItem('auth_token');
+        if (savedToken && !user()) {
+            // Decodifica o payload do JWT basicamente (sem validar assinatura no front)
+            try {
+                const payload = JSON.parse(atob(savedToken.split('.')[1]));
+                setUser({ id: payload.id, username: payload.username });
+            } catch (e) {
+                localStorage.removeItem('auth_token');
+            }
+        }
 
+        // Global error handler
         window.onunhandledrejection = (event) => {
-            alert(`ERRO ASSÍNCRONO: ${event.reason}`);
+            console.error('Erro Assíncrono:', event.reason);
+            if (event.reason?.message === 'Sessão expirada') {
+                navigate('/login');
+            }
         };
 
-        // Only redirect to login if not already there or in register
+        // Redirecionamento de segurança
         if (!user() && location.pathname !== '/login' && location.pathname !== '/register') {
             navigate('/login');
         }

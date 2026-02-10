@@ -20,6 +20,16 @@ const webFetch = async (path: string, options: any = {}) => {
             ...(options.headers || {})
         }
     });
+
+    if (response.status === 401) {
+        // Se receber 401 (Não autorizado), limpa o token e força redirecionamento
+        localStorage.removeItem('auth_token');
+        if (!window.location.pathname.includes('/login')) {
+            window.location.href = '/login';
+        }
+        throw new Error('Sessão expirada');
+    }
+
     if (!response.ok) {
         const err = await response.json();
         throw new Error(err.error || 'Erro na requisição');
